@@ -1,6 +1,6 @@
 {
   "name": "jest-axios-mock-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": " jest-axios really request data",
   "main": "dist/index.js",
   "scripts": {
