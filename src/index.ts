@@ -1,6 +1,7 @@
 import { app, setDebug, DataMapper } from "./server";
 import axios, { AxiosStatic } from "axios";
 import path from "path";
+import { REGEXP_FLAG, CORRESPOND_FLAGS } from "./constant";
 export { DataMapper } from "./server";
 
 interface Config {
@@ -45,18 +46,18 @@ export const setSuitesData = (data: DataMapper): Promise<boolean> => {
         Object.keys(data).forEach(item => {
             data[item].forEach(v => {
                 if (v.request.query && v.request.query instanceof RegExp) {
-                    v.request.query = "RegExp-" + v.request.query.toString().slice(1, -1);
+                    v.request.query = REGEXP_FLAG + v.request.query.toString().slice(1, -1);
                 }
                 if (v.request.data && v.request.data instanceof RegExp) {
-                    v.request.data = "RegExp-" + v.request.data.toString().slice(1, -1);
+                    v.request.data = REGEXP_FLAG + v.request.data.toString().slice(1, -1);
                 }
             });
         });
         axios
             .post(
-                `http://${config.host}:${config.port}/_set/_data/axios-mock`,
+                `http://${config.host}:${config.port}${CORRESPOND_FLAGS.SET_DATA}`,
                 { data },
-                { timeout: 2000 }
+                { proxy: { host: config.host, port: config.port }, timeout: 2000 }
             )
             .then(() => {
                 resolve(true);

@@ -12,6 +12,11 @@ var http__default = /*#__PURE__*/_interopDefaultLegacy(http);
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
 var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 
+const REGEXP_FLAG = "RegExp-";
+const CORRESPOND_FLAGS = {
+    SET_DATA: "/_set/_data/axios-mock",
+};
+
 let dataMapper = {};
 let debug = false;
 const setDebug = (status) => (debug = status);
@@ -33,8 +38,8 @@ const match = (path, method, query, data) => {
                 return false;
             if (item.request.query !== void 0) {
                 if (typeof item.request.query === "string" &&
-                    item.request.query.indexOf("RegExp-") === 0) {
-                    item.request.query = new RegExp(item.request.query.replace("RegExp-", ""));
+                    item.request.query.indexOf(REGEXP_FLAG) === 0) {
+                    item.request.query = new RegExp(item.request.query.replace(REGEXP_FLAG, ""));
                 }
                 if (typeof item.request.query === "string" && item.request.query !== query) {
                     return false;
@@ -45,8 +50,8 @@ const match = (path, method, query, data) => {
             }
             if (item.request.data !== void 0) {
                 if (typeof item.request.data === "string" &&
-                    item.request.data.indexOf("RegExp-") === 0) {
-                    item.request.data = new RegExp(item.request.data.replace("RegExp-", ""));
+                    item.request.data.indexOf(REGEXP_FLAG) === 0) {
+                    item.request.data = new RegExp(item.request.data.replace(REGEXP_FLAG, ""));
                 }
                 if (typeof item.request.data === "string" && item.request.data !== data) {
                     return false;
@@ -79,7 +84,7 @@ const app = http__default['default'].createServer((req, res) => {
     req.on("end", () => {
         let [resCode, resData] = [200, {}];
         const urlObj = new URL(req.url);
-        if (urlObj.pathname === "/_set/_data/axios-mock") {
+        if (urlObj.pathname === CORRESPOND_FLAGS.SET_DATA) {
             const body = JSON.parse(content);
             dataMapper = body.data;
         }
@@ -123,15 +128,15 @@ const setSuitesData = (data) => {
         Object.keys(data).forEach(item => {
             data[item].forEach(v => {
                 if (v.request.query && v.request.query instanceof RegExp) {
-                    v.request.query = "RegExp-" + v.request.query.toString().slice(1, -1);
+                    v.request.query = REGEXP_FLAG + v.request.query.toString().slice(1, -1);
                 }
                 if (v.request.data && v.request.data instanceof RegExp) {
-                    v.request.data = "RegExp-" + v.request.data.toString().slice(1, -1);
+                    v.request.data = REGEXP_FLAG + v.request.data.toString().slice(1, -1);
                 }
             });
         });
         axios__default['default']
-            .post(`http://${config.host}:${config.port}/_set/_data/axios-mock`, { data }, { timeout: 2000 })
+            .post(`http://${config.host}:${config.port}${CORRESPOND_FLAGS.SET_DATA}`, { data }, { proxy: { host: config.host, port: config.port }, timeout: 2000 })
             .then(() => {
             resolve(true);
         })

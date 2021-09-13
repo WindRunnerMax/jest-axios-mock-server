@@ -1,8 +1,12 @@
 {
   "name": "jest-axios-mock-server",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": " jest-axios really request data",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/WindrunnerMax/jest-axios-mock-server"
+  },
   "scripts": {
     "build": "rollup -c",
     "test:demo1": "jest test/demo1.test.js",

@@ -1,5 +1,5 @@
 import http from "http";
-
+import { REGEXP_FLAG, CORRESPOND_FLAGS } from "./constant";
 interface MapperItem {
     request: {
         method: "GET" | "POST" | "PUT" | "DELETE";
@@ -46,9 +46,9 @@ const match = (path: string, method: string, query: string, data: string) => {
             if (item.request.query !== void 0) {
                 if (
                     typeof item.request.query === "string" &&
-                    item.request.query.indexOf("RegExp-") === 0
+                    item.request.query.indexOf(REGEXP_FLAG) === 0
                 ) {
-                    item.request.query = new RegExp(item.request.query.replace("RegExp-", ""));
+                    item.request.query = new RegExp(item.request.query.replace(REGEXP_FLAG, ""));
                 }
                 if (typeof item.request.query === "string" && item.request.query !== query) {
                     return false;
@@ -60,9 +60,9 @@ const match = (path: string, method: string, query: string, data: string) => {
             if (item.request.data !== void 0) {
                 if (
                     typeof item.request.data === "string" &&
-                    item.request.data.indexOf("RegExp-") === 0
+                    item.request.data.indexOf(REGEXP_FLAG) === 0
                 ) {
-                    item.request.data = new RegExp(item.request.data.replace("RegExp-", ""));
+                    item.request.data = new RegExp(item.request.data.replace(REGEXP_FLAG, ""));
                 }
                 if (typeof item.request.data === "string" && item.request.data !== data) {
                     return false;
@@ -95,7 +95,7 @@ export const app = http.createServer((req, res) => {
     req.on("end", () => {
         let [resCode, resData] = [200, {}];
         const urlObj = new URL(req.url);
-        if (urlObj.pathname === "/_set/_data/axios-mock") {
+        if (urlObj.pathname === CORRESPOND_FLAGS.SET_DATA) {
             const body = JSON.parse(content);
             dataMapper = body.data;
         } else {
