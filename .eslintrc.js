@@ -27,12 +27,7 @@ module.exports = {
             extends: ["plugin:@typescript-eslint/recommended"],
         },
     ],
-    globals: {
-        uni: true,
-        wx: true,
-        process: true,
-        Promise: true,
-    },
+    globals: {},
     rules: {
         // 分号
         "semi": "error",
